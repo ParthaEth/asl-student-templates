@@ -138,8 +138,8 @@ As expected however, CKLAM marginalization as discussed above will cause cross i
 \begin{figure}[ht]
 	\centering
 		\includegraphics[width=1.00\textwidth]{images/HessianSparsity.png}
-	\label{fig:HessianSparsity}
   \caption{Contribution to the hessian matrix of the overall cost by each constraint. Here pose prior has been shown in blue, IMU in red and visual in yellow.}
+  \label{fig:HessianSparsity}
 \end{figure}
 
 In this way if we consider all the constraints the sparsity pattern that we get is shown in figure (\ref{fig:HessianSparsityAllFillUp}).
@@ -147,8 +147,8 @@ In this way if we consider all the constraints the sparsity pattern that we get 
 \begin{figure}[ht]
 	\centering
 		\includegraphics[width=1.00\textwidth]{images/HessianSparsityAllFillUp.png}
-	\label{fig:HessianSparsityAllFillUp}
   \caption{Once all the constraints are considered it can be seen that the hessian matrix of BA is inherently sparse. Marginalization of non-key-frame poses cause this sparsity to be lost, if is achieved by taking the Schur complement of the block matrix in second quadrant.}
+  \label{fig:HessianSparsityAllFillUp}
 \end{figure}
 
 As pointed out earlier by comparing figure (\ref{fig:HessianSparsityAllFillUp}) and Eq.(\ref{H_NEW_G_NEW}), it is clear that the marginalized hessian matrix and gradient vector is found by taking the Schur complement of the block matrix that lie in the second quadrant created by the red lines in figure (\ref{fig:HessianSparsityAllFillUp}). Similar is the case for the gradient vector. It is also easy to see that the fill up between $f_1$ and $f_5$ is caused due to our choice of marginalization point, i.e. the place at which we put the red lines in figure (\ref{fig:HessianSparsityAllFillUp}). If we instead place the marginalization point as shown in figure (\ref{fig:HessianSparsityAllFillUpKeepSparsity}), we would make only $x_1\-x_4$ block dense. Since the dimension of this block is very small (in our implementation 12x12), the subsequent optimization would not be impacted in computational cost significantly.
@@ -156,8 +156,8 @@ As pointed out earlier by comparing figure (\ref{fig:HessianSparsityAllFillUp}) 
 \begin{figure}[ht]
 	\centering
 		\includegraphics[width=1.00\textwidth]{images/HessianSparsityAllFillUpKeepSparsity.png}
-	\label{fig:HessianSparsityAllFillUpKeepSparsity}
   \caption{CKLAM avoids making a substantial part of the hessian matrix dense by marginalizing out the constraints between features seen from key frame and non-key-frame. The effect can be visualized in figure \ref{fig:CKLAMMarginalizationFeatureClone}}
+  \label{fig:HessianSparsityAllFillUpKeepSparsity}
 \end{figure}
 
 One point to be noticed here though is that since we marginalized the landmarks $f_1$ and $f_5$ we either should not add an error term corresponding to the constraint represented by $x_1$, $f_1$ observation link while calculating the the hessian matrix, in which case the marginalization will have the effect represented by figure (\ref{fig:CKLAMMarginalizationFeatureClone}), or we should not reuse the $f_1$ landmarks in the batch optimization we used for CKLAM calculation. 
@@ -165,8 +165,8 @@ One point to be noticed here though is that since we marginalized the landmarks 
 \begin{figure}[ht]
 	\centering
 		\includegraphics[width=1.00\textwidth]{images/CKLAMMarginalizationFeatureClone.png}
-	\label{fig:CKLAMMarginalizationFeatureClone}
   \caption{In order to avoid making the hessian matrix dense CKLAM marginalizes the constraints between non-key-frames and landmarks observed from key-frames. In effect it is as if we had a copy of $f_1$ and $f_5$ that got marginalized, while $f_1$ and $f_5$ were not modified. \cite{CKLAM}}
+  \label{fig:CKLAMMarginalizationFeatureClone}
 \end{figure}
 
 A dense information matrix between key frame poses $x_1$ and $x_4$ represents constraints imposed by non key frames on the key frames. In a completely generalized setting where we have prior information about absolute position e.g. when we have GPS information of frames, we can rewrite the batch optimization cost function in Eq.(\ref{BA_FULL_COST}) as in Eq.(\ref{BA_FULL_COST_REWRITTEN})
@@ -219,15 +219,15 @@ In this section let us formalize the expected behavior of RCKLAM so we can compa
 \begin{figure}
 	\centering
 		\includegraphics[width=1.00\textwidth]{images/hypotheticalLoopClosure.png}
-	\label{fig:hypotheticalLoopClosure}
   \caption{Loop closure on a hypothetical rectangular map. Notice that the estimation from the raw odometry is drifting. We are interested in comparing the optimized map with RCKLAM and CKLAM technique. The red edge represent a loop closure edge.}
+  \label{fig:hypotheticalLoopClosure}
 \end{figure}
 Since the loop closure edge now will cause the last vertex to move towards its true position we expect the optimized maps to improve form their first estimate. Yet due to the way of CKLAM's representation we expect it to not propagate the information many vertex back while we expect RCKLAM to achieve better result. Our expectation is summarized in figure \ref{fig:hypotheticalLoopClosureCklamRcklam}
 \begin{figure}
 	\centering
 		\includegraphics[width=1.00\textwidth]{images/hypotheticalLoopClosureCklamRcklam.png}
-	\label{fig:hypotheticalLoopClosureCklamRcklam}
   \caption{From the discussion in section \ref{sec:RCKLAMExpectation} here we summarize the expected optimization result with CKLAM and RCKLAM. We expect that CKLAM will limit the information propagation while RCKLAM will not do so. This claim is verified by the result shown in figure \ref{fig:Syn16MapLoppClosureSym}}
+  \label{fig:hypotheticalLoopClosureCklamRcklam}
 \end{figure}
 
  
@@ -335,8 +335,8 @@ In order to find the relationship betwen $A_1$ and $A_\mathrm{RCKLAM}$ we have t
 \begin{figure}
   \centering
     \includegraphics[width=1.00\textwidth]{images/Syn31_map.png}
-  \label{fig:Syn31Map}
   \caption{Ground truth and simulated sliding window estimation. Ground truth given by green line and simulated odometry result given by red line. This is a low bias high variance situation so the estimator is simulated as drift free. This experiment measures CKLAM and RCKLAM's noise tolerance.}
+  \label{fig:Syn31Map}
 \end{figure}
   
   
@@ -346,8 +346,8 @@ In order to find the relationship betwen $A_1$ and $A_\mathrm{RCKLAM}$ we have t
 \begin{figure}
   \centering
     \includegraphics[width=1.00\textwidth]{images/Syn31_error_plot_CKLAM.png}
-  \label{fig:Syn31ErrorPlotCKLAM}
   \caption{Performance of CKLAM compared against full batch optimization starting with low bias high variance noise corrupted map.}
+  \label{fig:Syn31ErrorPlotCKLAM}
 \end{figure}
   
   
@@ -356,8 +356,8 @@ In order to find the relationship betwen $A_1$ and $A_\mathrm{RCKLAM}$ we have t
   \begin{figure}
     \centering
       \includegraphics[width=1.00\textwidth]{images/Syn31_error_plot.png}
-    \label{fig:Syn31ErrorPlot}
     \caption{Performance of RCKLAM compared against full batch optimization and CKALM starting with low bias high variance noise corrupted map.}
+    \label{fig:Syn31ErrorPlot}
   \end{figure}
   
   To verify the claim of section \ref{sec:RCKLAM} with the help of figure \ref{sec:RCKLAMExpectation}, we simulated a map in which the camera translates in $x$ direction with constant velocity and simulate a drifting sliding window estimator. In this simulation experiment the camera drifts in the positive $Y$ direction, and finally we optimized the drifted map with CKLAM technique. To create a reference point of CKLAM's performance in presence of drift corruption we simulated CKLAM optimization first without loop closure. The results of this experiment is shown in figure \ref{fig:Syn16MapCklam} the ground truth map is given in red line while the drift corruption map is given in purple line, and finally the sky blue line represents the optimized map given by CKLAM. An important point to be noticed here is that unlike the previous methods where we plotted error norm with respect to vertex index, here we plot the vertex positions themselves. It is clear that although the quality has improved the optimized map still depicts drift error and confirms our expectation that CKLAM might perform poorly in case of presence of loop closure edge since it binds the key frames in global frame.
@@ -365,8 +365,8 @@ In order to find the relationship betwen $A_1$ and $A_\mathrm{RCKLAM}$ we have t
 \begin{figure}
   \centering
     \includegraphics[width=1.00\textwidth]{images/Syn16_map_cklam.png}
-  \label{fig:Syn16MapCklam}
   \caption{Performance of CKLAM starting with high bias low variance noise corrupted map. Notice that although CKALM optimization improves from the starting position because of unobservability of absolute position the result is also drift corrupted, i.e. the error is allowed to grow without limit given a long enough map.}
+  \label{fig:Syn16MapCklam}
 \end{figure}
   
   Given the comparison point of CKLAM's performance with drift corrupted map in figure \ref{fig:Syn16MapCklam}, we can now compare the performance of CKLAM against RCKLAM in case of loop closure. To simulate loop closure we add a prior to the last vertex of the drift corrupted map. The mean of the prior is taken from the ground truth value. The result obtained after optimization with both CKALM and RCKLAM is shown in the figure \ref{fig:Syn16MapLoppClosureSym}
@@ -374,8 +374,8 @@ In order to find the relationship betwen $A_1$ and $A_\mathrm{RCKLAM}$ we have t
 \begin{figure}[ht]
   \centering
     \includegraphics[width=1.00\textwidth]{images/Syn16_map_loppClosureSym.png}
-  \label{fig:Syn16MapLoppClosureSym}
   \caption{Simulated loop closure for a high bias corrupted map. Because of CKLAMs design it can not propagate new information well, while RCKLAM efficiently distributes this new information well. The loop closure is simulated by introducing a pose prior to the last vertex.}
+  \label{fig:Syn16MapLoppClosureSym}
 \end{figure}
 
 As can be seen from figure \ref{fig:Syn16MapLoppClosureSym} RCKLAM has distributed the loop closing information over the map better than CKLAM as expected. Since RCKLAM only constrains the relative pose between two consecutive key frames, integrated noise is represented as integrated noise. All visual inertial mapping systems underestimates the uncertainty in the estimated poses and RCKLAM is not an exception to that, it is better off as compared to the CKALM, which is evident from figure \ref{fig:Syn16MapLoppClosureSym}. Now we shall have look at the performance of RCKLAM in real-life data.
@@ -388,8 +388,8 @@ The experimental setup consisted of the VI\_sensor \cite{6906892} developed by t
 \begin{figure}
 	\centering
 		\includegraphics[width=1.00\textwidth]{images/CKLAMvsGT.png}
-	\label{fig:CKLAMvsGT}
   \caption{Data set MH\_02 from EuRoC \cite{Burri25012016} data set collection. Comparison between ground truth (blue), CKLAM(green) and traditional key framing technique(red). Clearly CKLAM by preserving information from non-key-frames perform better than traditional key-framing approach.}
+  \label{fig:CKLAMvsGT}
 \end{figure}
 
 Figure \ref{fig:RCKLAMvsGT} shows the same experiment repeated with RCKALM in place of CKLAM. Once again the green map is closer to the blue one as compared to the red showing that RCKLAM achieves results superior to traditional key framing. 
@@ -397,8 +397,8 @@ Figure \ref{fig:RCKLAMvsGT} shows the same experiment repeated with RCKALM in pl
 \begin{figure}
 	\centering
 		\includegraphics[width=1.00\textwidth]{images/RCKLAMvsGT.png}
-	\label{fig:RCKLAMvsGT}
   \caption{Data set MH\_02 from EuRoC \cite{Burri25012016} data set collection. Comparison between ground truth (blue), RCKLAM(green) and traditional key framing technique(red). Clearly RCKLAM by preserving information from non-key-frames perform better than traditional key-framing approach.}
+  \label{fig:RCKLAMvsGT}
 \end{figure}
 
 
@@ -407,22 +407,22 @@ Since it is difficult to compare more that two methods with the kind of plots re
 \begin{figure}
 	\centering
 		\includegraphics[width=1.00\textwidth]{images/MethodComparisonMH01.png}
-	\label{fig:MethodComparisonMH01}
   \caption{Data set MH\_01 from EuRoC \cite{Burri25012016} data set collection. Overall performance quality of different methods on different maps. The average error in every vertex position and their covariance for different methods are represented here.}
+  \label{fig:MethodComparisonMH01}
 \end{figure}
 
 \begin{figure}
 	\centering
 		\includegraphics[width=1.00\textwidth]{images/MethodComparisonMH02.png}
-	\label{fig:MethodComparisonMH02}
   \caption{Data set MH\_02 from EuRoC \cite{Burri25012016} data set collection. Same experiment as in figure \ref{fig:MethodComparisonMH01}, but with a different data set.}
+  \label{fig:MethodComparisonMH02}
 \end{figure}
 
 \begin{figure}
 	\centering
 		\includegraphics[width=1.00\textwidth]{images/MethodComparisonMH03.png}
-	\label{fig:MethodComparisonMH03}
   \caption{Data set MH\_03 from EuRoC \cite{Burri25012016} data set collection. Same experiment as in figure \ref{fig:MethodComparisonMH01}, but with yet another data set.}
+  \label{fig:MethodComparisonMH03}
 \end{figure}
 
 This can be considered as the price we pay for the increase in speed that is achieved. The comparison of computational time requirement for different methods for different maps is shown in figure \ref{fig:MethodComparisonTimeMH01} through \ref{fig:MethodComparisonTimeMH03}. It can easily be noticed that the we gain sizable gain in computational complexity as compared to the full batch optimization, which is often infeasible for large maps. 
@@ -430,22 +430,22 @@ This can be considered as the price we pay for the increase in speed that is ach
 \begin{figure}
 	\centering
 		\includegraphics[width=1.00\textwidth]{images/MethodComparisonTimeMH01.png}
-	\label{fig:MethodComparisonTimeMH01}
   \caption{Data set MH\_01 from EuRoC \cite{Burri25012016} data set collection. Computational complexity comparison of different methods. Mean time taken of one optimization step for each method and their variance ha been plotted. In this map 122 frames were selected as key-frames out of 913 vertices. The reduction in number of parameters is the main contributor towards the reduction in computational complexity.}
+  \label{fig:MethodComparisonTimeMH01}
 \end{figure}
 
 \begin{figure}
 	\centering
 		\includegraphics[width=1.00\textwidth]{images/MethodComparisonTimeMH02.png}
-	\label{fig:MethodComparisonTimeMH02}
   \caption{Data set MH\_02 from EuRoC \cite{Burri25012016} data set collection. Same experiment as in fugre \ref{fig:MethodComparisonTimeMH01}. In this map $104$ frames were selected as key-frames out of $752$ vertices. The reduction in number of parameters is the main contributor towards the reduction in computational complexity.}
+  \label{fig:MethodComparisonTimeMH02}
 \end{figure}
 
 \begin{figure}
 	\centering
 		\includegraphics[width=1.00\textwidth]{images/MethodComparisonTimeMH03.png}
-	\label{fig:MethodComparisonTimeMH03}
   \caption{Data set MH\_03 from EuRoC \cite{Burri25012016} data set collection. Same experiment as in fugre \ref{fig:MethodComparisonTimeMH01}. In this map $160$ frames were selected as key-frames out of $667$ vertices. The reduction in number of parameters is the main contributor towards the reduction in computational complexity.}
+  \label{fig:MethodComparisonTimeMH03}
 \end{figure}
 
 \chapter{Conclusion}
