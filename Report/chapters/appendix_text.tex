@@ -1,3 +1,43 @@
-\chapter{Irgendwas}\label{sec:irgendwas}
+\chapter{Schur Complement of Square-root cost}\label{sec:schur_sqrt_cost}
 
-Bla bla \dots
+In chapter \ref{sec:RCKLAM} in section \ref{rcklam_simple} we had the task of finding $A_\mathrm{RCKLAM}$ and $b_\mathrm{RCKLAM}$ given $A$ and $b$. The objective is to approximate the cost given in Eq.(\ref{sqrt_marginalization}) with Eq.(\ref{sqrt_cost_approx}) such that the solution for $x_1$ stays the same when we perform $argmin$ operation on either of the cost functions.
+
+\begin{subequations}
+  \begin{equation}
+    C = \left(A\begin{bmatrix}x_1 \\ x_2\end{bmatrix} + b\right)^T\left(A\begin{bmatrix}x_1 \\ x_2\end{bmatrix} + b\right)
+    \label{sqrt_marginalization}
+  \end{equation}
+  \begin{equation}
+    C_\mathrm{RCKLAM} = \left(A_\mathrm{RCKLAM}x_1  + b_\mathrm{RCKLAM}\right)^T\left(A_\mathrm{RCKLAM}x_1  + b_\mathrm{RCKLAM}\right)
+    \label{sqrt_cost_approx}
+  \end{equation}
+\end{subequations}
+
+Since the original cost $C$ in Eq.(\ref{sqrt_marginalization}) is quadratic in order to perform minimization we can simply set its first derivative to zero. This on further simplification gives us the following : 
+
+\begin{equation}
+\begin{split}
+  &\frac{\partial}{\partial X} \left(A\begin{bmatrix}x_1 \\ x_2\end{bmatrix} + b\right)^T\left(A\begin{bmatrix}x_1 \\ x_2\end{bmatrix} + b\right) = 0 \\
+  &\Rightarrow 2\left(A\begin{bmatrix}x_1 \\ x_2\end{bmatrix} + b\right)^TA = 0 \\
+  &\Rightarrow A\begin{bmatrix}x_1 \\ x_2\end{bmatrix} + b = 0 \\
+  &\Rightarrow \begin{bmatrix}A_{11} & A_{12}\\ A_{21} & A_{22}\end{bmatrix} \begin{bmatrix}x_1 \\ x_2\end{bmatrix} + \begin{bmatrix}b_1 \\ b_2\end{bmatrix} = 0 \\
+  &\Rightarrow A_{11}x_1 + A_{12}x_2 + b_1 = 0 \text{and} A_{21}x_1 + A_{22}x_2 + b_2 = 0 \\ 
+  &\Rightarrow x_2 = -A_{22}^{-1}A_{21}x_1 - A_{22}^{-1}b_2 \\
+  &\Rightarrow \left(A_{11} - A_{12}A_{22}^{-1}A_{21}\right)x_1-A_{12}A_{22}^{-1}b_2 + b_1 = 0 \\
+\end{split}
+\label{A_B_marginalization}
+\end{equation}
+Here $X = \begin{bmatrix}x_1 \\ x_2\end{bmatrix}$, $A = \begin{bmatrix}A_{11} & A_{12}\\ A_{21} & A_{22}\end{bmatrix}$ and $b = \begin{bmatrix}b_1 \\ b_2\end{bmatrix}$. As before the last step of Eq.(\ref{A_B_marginalization}) can be viewed as the first derivative of $C_\mathrm{RCKLAM}$ set to zero. Hence by comparison we get the results given by Eq.(\ref{RCKLAM_FINAL_EQ})
+
+\begin{subequations}
+  \begin{equation}
+    A_\mathrm{RCKLAM} = A_{11} - A_{12}A_{22}^{-1}A_{21}
+  \end{equation}
+
+  \begin{equation}
+    b_\mathrm{RCKLAM} = b_1 - A_{12}A_{22}^{-1}b_2
+  \end{equation}
+  \label{RCKLAM_FINAL_EQ}
+\end{subequations}
+
+Clearly the form of the solution shows that in order to marginalize/eliminate the $x_2$ variable we just need to take the schure complement of the appropriate block of the square root hessian matrix, in exactly the same way as before.
