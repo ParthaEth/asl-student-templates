@@ -7,7 +7,7 @@ A bundle adjustment problem of a visual inertial map (VIMAP) is nothing but a co
 \begin{figure}[ht]
 	\centering
 		\includegraphics[width=1.00\textwidth]{images/cklam_block.png}
-		\caption{An example of the exploration epoch before (left) and after (right) the approximation employed in CKLAM. $x_0$, $x4$ are the key-frames to be retained, and $x_1$, $x_2$, and $x_3$ are the non-key-frames to be marginalized. Similarly, $f_1$, $f_5$ are key landmarks (observed from the key-frames) to be retained, while $f_2$, $f_3$, and $f_4$ are non-key landmarks (observed exclusively from the non-key-frames) to be marginalized. In the left figure, the arrows denote the measurements between different states. In the right figure, the blue arrow represents the pose constraint generated between the key-frames using C-KLAM. \cite{CKLAM} }
+		\caption{An example of the exploration epoch before (left) and after (right) the approximation employed in CKLAM. $x_0$, $x4$ are the key-frames to be retained, and $x_1$, $x_2$, and $x_3$ are the non-key-frames to be marginalized. Similarly, $f_1$, $f_5$ are key landmarks (observed from the key-frames) to be retained, while $f_2$, $f_5$, and $f_4$ are non-key landmarks (observed exclusively from the non-key-frames) to be marginalized. In the left figure, the arrows denote the measurements between different states. In the right figure, the blue arrow represents the pose constraint generated between the key-frames using C-KLAM. \cite{CKLAM} }
 	\label{fig:CKLAM_BLOCK}
 \end{figure}
 
@@ -18,12 +18,12 @@ In figure \ref{fig:CKLAM_BLOCK} $z_{ij}$ denote the set of exteroceptive measure
   \label{BA_FULL_COST}
 \end{equation}
 
-In a more concrete way this cost function can also be written as in Eq.(\ref{BA_FULL_COST_REWRITTEN}). Clearly every measurement here contributes one residual term and we perform an $argmin$ operation on the final squared residual. It can be seen that the number of such residual term for such a problem is addition of number of camera poses and number of landmarks observed form each of these poses, which are often very high in real life maps. A typical small map of duration of about a minute can have more than $1000$ robot pose and $12000$ IMU measurements and more than $50000$ landmarks. Hence the $argmin$ operation on a map of this size is quite computation intensive. In order to perform bundle adjustment in reasonable time traditionally selected robot poses and associated observations are discarded. For instance in figure \ref{fig:CKLAM_BLOCK} we decided to discard poses $x_1$ through $x_3$ as well as $f_2$ through $f_4$. This leads to dramatic reduction in computational complexity by crucial information from non-key-frames is lost. CKLAM attempts to preserve this information by projecting them into the retained frames. The newly computed information is represented by the blue arrow from $x_0$ to $x_4$ in the right half of figure \ref{fig:CKLAM_BLOCK}
+In a more concrete way this cost function can also be written as in Eq.(\ref{BA_FULL_COST_REWRITTEN}). Clearly every measurement here contributes one residual term and we perform an $argmin$ operation on the final squared residual. It can be seen that the number of such residual term for such a problem is addition of number of camera poses and number of landmarks observed form each of these poses, which are often very high in real life maps. A typical small map of duration of about a minute can have more than $1000$ robot pose, $12000$ IMU measurements and more than $50000$ landmarks. Hence the $argmin$ operation on a map of this size is computation quite intensive. In order to perform bundle adjustment in reasonable time traditionally selected robot poses and associated observations are discarded. For instance in figure \ref{fig:CKLAM_BLOCK} we decided to discard poses $x_1$ through $x_3$ as well as $f_2$ through $f_4$. This leads to dramatic reduction in computational complexity but crucial information from non-key-frames is lost. CKLAM attempts to preserve this information by projecting them into the retained frames. The newly computed information is represented by the blue arrow from $x_0$ to $x_4$ in the right half of figure \ref{fig:CKLAM_BLOCK}
 
 \section{CKLAM Formulation}
 As stated earlier the objctive of CKLAM is to retain information from the poses that we have selected to eliminate such that we can achieve computational complexity reduction while retaining high quality of optimization result. If we look closely it is not hard to notice that the two terms of Eq.(\ref{BA_FULL_COST}) correspond to the two different part of the optimization problem in hand, viz. the first part i.e. $f_1$ comes from the terms that we intend to retain after CKLAM process while the the second part $f_2$ is the contribution of the poses and landmarks that we intend to eliminate from the optimization. In order to perform this elimination process let us define the second term of second part of the Eq.(\ref{BA_FULL_COST}) to be $C_2$, formally given in Eq. (\ref{FULL_C2_COST}). 
 
-Since $C_2$ depends not only on the key-frame poses viz. ($x_{0,4}$) but also upon poses ($x_{1:3}$) that we would like to eliminate/marginalize, we have to find an approximation $C_2^{'}$ such that $C_2^{'}$ would depend only on the key-frame poses and landmarks that we intend to retain, i.e. $x_0$, $x_4$, $f_1$ and $f_5$. 
+Since $C_2$ depends not only on the key-frame poses viz. ($x_{0,4}$) but also upon non-key-frame poses, viz. ($x_{1:3}$), that we would like to eliminate/marginalize, we have to find an approximation $C_2^{'}$ such that $C_2^{'}$ would depend only on the key-frame poses and landmarks that we intend to retain, i.e. $x_0$, $x_4$, $f_1$ and $f_5$. 
 
 \begin{equation}
 C_2 = f_2(x_{1:4}, f_{1:5}, z_{1:3, 1:5})
@@ -62,7 +62,7 @@ C_2 \approx \alpha + g^T\begin{bmatrix} x_{0:4} - \hat x_{0:4} \\
 \end{split}
 \end{equation}
 
-Here, $\hat x_0, \hat x_4, \hat f_1$ and $\hat f_5$ are the best available estimates of $x_0, x_4, f_1$ and $f_5$ at the time of marginalization. Clearly these serve as the quadratization point for the independent variables in the cost function and are usually taken from the sliding window estimator. The second part of Eq.(\ref{C2_APPROX}) is obtained by reshuffling the the terms in the first part. It can be also be observed from Eq.(\ref{C2_APPROX}) that we would like to eliminate from the cost function the independent variables $x_{1:3}$ through $f_{2:4}$. Let us rewrite the hessian matrix $H$ and the gradient vector $g$ as in Eq.(\ref{REWRITE_H_G})
+Here, $\hat x_0, \hat x_4, \hat f_1$ and $\hat f_5$ are the best available estimates of $x_0, x_4, f_1$ and $f_5$ at the time of marginalization. Clearly these serve as the quadratization point for the independent variables in the cost function and are usually taken from the sliding window estimator. The second part of Eq.(\ref{C2_APPROX}) is obtained by reshuffling the the terms in the first part. It can also be observed from Eq.(\ref{C2_APPROX}) that we would like to eliminate from the cost function the independent variables $x_{1:3}$ through $f_{2:4}$. Let us rewrite the hessian matrix $H$ and the gradient vector $g$ as in Eq.(\ref{REWRITE_H_G})
 
 \begin{subequations}
 \begin{equation}
@@ -82,7 +82,7 @@ g = \begin{bmatrix}
 \label{REWRITE_H_G}
 \end{subequations}
 
-Let us also rename $\begin{bmatrix} x_{0, 4} - \hat x_{0, 4} \\ f_{1, 5} - \hat f_{1, 5} \end{bmatrix}$ as $x_1$ and $\begin{bmatrix} x_{1:3} - \hat x_{1:3} \\ f_{2:4} - \hat f_{2:4} \end{bmatrix}$ as $x_2$. Now the objective is to perform $argmin_X(C_2) = argmin_X(\frac{1}{2}X^THX + g^TX + \alpha)$ where $X = \begin{bmatrix} x_1 x_2 \end{bmatrix}$. Since we have to minimize a quadratic function we can simply set first derivative of it to zero. This leads us to Eq.(\ref{OPT_QUADRATIC})
+Let us also rename $\begin{bmatrix} x_{0, 4} - \hat x_{0, 4} \\ f_{1, 5} - \hat f_{1, 5} \end{bmatrix}$ as $m_1$ and $\begin{bmatrix} x_{1:3} - \hat x_{1:3} \\ f_{2:4} - \hat f_{2:4} \end{bmatrix}$ as $m_2$. Now the objective is to perform $argmin_M(C_2) = argmin_M(\frac{1}{2}M^THM + g^TM + \alpha)$ where $M = \begin{bmatrix} m_1 \\ m_2 \end{bmatrix}$. Since we have to minimize a quadratic function we can simply set first derivative of it to zero. This leads us to Eq.(\ref{OPT_QUADRATIC})
 
 \begin{equation}
 	\begin{bmatrix} 
@@ -90,8 +90,8 @@ Let us also rename $\begin{bmatrix} x_{0, 4} - \hat x_{0, 4} \\ f_{1, 5} - \hat 
 				H_{21} & H_{22} \\
 	\end{bmatrix}
 	\begin{bmatrix} 
-				x_{1} \\
-				x_{2} \\
+				m_{1} \\
+				m_{2} \\
 	\end{bmatrix} + 
 	\begin{bmatrix} 
 				g_{1} \\
@@ -102,25 +102,25 @@ Let us also rename $\begin{bmatrix} x_{0, 4} - \hat x_{0, 4} \\ f_{1, 5} - \hat 
 Expanding Eq.(\ref{OPT_QUADRATIC}) gives Eq.(\ref{FIRST_DERIVATIVE_EXPANDED})
 \begin{subequations}
 	\begin{equation}
-		H_{11}x_1 + H_{12}x_2 + g_1 = 0
+		H_{11}m_1 + H_{12}m_2 + g_1 = 0
 	\end{equation}
 	\begin{equation}
-		H_{21}x_1 + H_{22}x_2 + g_2 = 0
+		H_{21}m_1 + H_{22}m_2 + g_2 = 0
 	\end{equation}
 \label{FIRST_DERIVATIVE_EXPANDED}
 \end{subequations}
-Performing Gaussian elimination on Eq.(\ref{FIRST_DERIVATIVE_EXPANDED}) to eliminate $x_2$, we obtain first derivative of the desired marginalized cost function as given by Eq.(\ref{MARGINALIZD_COST})
+Performing Gaussian elimination on Eq.(\ref{FIRST_DERIVATIVE_EXPANDED}) to eliminate $m_2$, we obtain first derivative of the desired marginalized cost function as given by Eq.(\ref{MARGINALIZD_COST})
 
 \begin{equation}
-	\left(H_{11} - H_{12}H{22}^{-1}H_{21}\right) + g_1 - H_{12}H_{22}^{-1}g_2 = 0
+	\left(H_{11} - H_{12}H_{22}^{-1}H_{21}\right)m_1 + g_1 - H_{12}H_{22}^{-1}g_2 = 0
 \label{MARGINALIZD_COST}
 \end{equation}
 
-Clearly the corresponding quadratic cost function is given by $x_1^TH_\mathrm{new}x_1 + g_\mathrm{new}^Tx + \alpha_1$ where $H_\mathrm{new}$ and $g_\mathrm{new}$ is given in Eq.(\ref{H_NEW_G_NEW})
+Clearly the corresponding quadratic cost function is given by $m_1^TH_\mathrm{new}m_1 + g_\mathrm{new}^Tm_1 + \alpha_1$. Where $H_\mathrm{new}$ and $g_\mathrm{new}$ is given in Eq.(\ref{H_NEW_G_NEW})
 
 \begin{subequations}
 	\begin{equation}
-		H_{new} = \left(H_{11} - H_{12}H_{22}^{-1}H_{21}\right)
+		H_{new} = H_{11} - H_{12}H_{22}^{-1}H_{21}
 	\end{equation}
 
 	\begin{equation}
@@ -128,12 +128,12 @@ Clearly the corresponding quadratic cost function is given by $x_1^TH_\mathrm{ne
 	\end{equation}
 	\label{H_NEW_G_NEW}
 \end{subequations}
-The result can be readily interpreted as the Schur complement of the block matrix in the second quadrant of the hessian matrix as shown in figure \ref{fig:HessianSparsityAllFillUp}.
+The result can be readily interpreted as the Schur complement of the block matrix in the second quadrant of the hessian matrix as shown in figure \ref{fig:HessianSparsityAllFillUp}. We do not need to compute $\alpha_1$ since constants do not affect solution to an optimization problem.
 
 \section{CKLAM Sparsity}
 Attempts to marginalize poses in order to keep computational complexity within bounds have been made prior to CKLAM formulation. An example of such an effort is the sliding window estimator. Here any frame that goes out of the scope of the window is marginalized out. But this operation make the hessian matrix of the cost function dense. The sparsity of the hessian matrix can be examined in figure \ref{fig:HessianSparsity} and figure \ref{fig:HessianSparsityAllFillUp}. Since it is easier to invert sparse matrices and clearly the hessian matrix associated to Bundle Adjustment is inherently sparse, it is of interest not to make it dense.
 
-As expected however, CKLAM marginalization as discussed above will cause cross information terms to be created between $f_1$ and $f_5$. In practical cases $f_1$ and $f_5$ will correspond to many landmarks opposed to the toy example we are considering from figure (\ref{fig:CKLAM_BLOCK}). This clearly impacts the sparsity of the optimization problem that we shall have to consider once we wold like to perform the batch optimization with CKLAM information. This is also the exact reason why traditional key framing approach was adopted. CKLAM avoids this fill up by making use of the following formulation. Let us again examin the hessian matrix corresponding to full batch optimization cost function, as given in figure (\ref{fig:HessianSparsity})
+As expected however, CKLAM marginalization will cause cross information terms to be created between key landmarks, i.e. $f_1$ and $f_5$ of figure \ref{fig:HessianSparsity}. In practical cases $f_1$ and $f_5$ will correspond to many landmarks opposed to the toy example we are considering from figure \ref{fig:HessianSparsity}. This clearly impacts the sparsity of the optimization problem that we shall have to consider once we wold like to perform the batch optimization with CKLAM information. This is also the exact reason why traditional key framing approach was adopted. CKLAM avoids this fill up by making use of the following formulation. Let us again examin the hessian matrix corresponding to full batch optimization cost function, as given in figure (\ref{fig:HessianSparsity})
 
 \begin{figure}[ht]
 	\centering
@@ -151,7 +151,7 @@ In this way if we consider all the constraints the sparsity pattern that we get 
   \label{fig:HessianSparsityAllFillUp}
 \end{figure}
 
-As pointed out earlier by comparing figure (\ref{fig:HessianSparsityAllFillUp}) and Eq.(\ref{H_NEW_G_NEW}), it is clear that the marginalized hessian matrix and gradient vector is found by taking the Schur complement of the block matrix that lie in the second quadrant created by the red lines in figure (\ref{fig:HessianSparsityAllFillUp}). Similar is the case for the gradient vector. It is also easy to see that the fill up between $f_1$ and $f_5$ is caused due to our choice of marginalization point, i.e. the place at which we put the red lines in figure (\ref{fig:HessianSparsityAllFillUp}). If we instead place the marginalization point as shown in figure (\ref{fig:HessianSparsityAllFillUpKeepSparsity}), we would make only $x_1\-x_4$ block dense. Since the dimension of this block is very small (in our implementation 12x12), the subsequent optimization would not be impacted in computational cost significantly.
+As pointed out earlier by comparing figure (\ref{fig:HessianSparsityAllFillUp}) and Eq.(\ref{H_NEW_G_NEW}), it is clear that the marginalized hessian matrix and gradient vector is found by taking the Schur complement of the block matrix that lie in the second quadrant created by the red lines in figure (\ref{fig:HessianSparsityAllFillUp}). Similar is the case for the gradient vector. It is also easy to see that the fill up between $f_1$ and $f_5$ is caused due to our choice of marginalization point, i.e. the place at which we put the red lines in figure (\ref{fig:HessianSparsityAllFillUp}). If we instead place the marginalization point as shown in figure (\ref{fig:HessianSparsityAllFillUpKeepSparsity}), we would make only $x_1, x_4$ block dense. Since the dimension of this block is very small (in our implementation 12x12), the subsequent optimization would not be impacted in computational cost significantly.
 
 \begin{figure}[ht]
 	\centering
@@ -160,7 +160,7 @@ As pointed out earlier by comparing figure (\ref{fig:HessianSparsityAllFillUp}) 
   \label{fig:HessianSparsityAllFillUpKeepSparsity}
 \end{figure}
 
-One point to be noticed here though is that since we marginalized the landmarks $f_1$ and $f_5$ we either should not add an error term corresponding to the constraint represented by $x_1$, $f_1$ observation link while calculating the the hessian matrix, in which case the marginalization will have the effect represented by figure (\ref{fig:CKLAMMarginalizationFeatureClone}), or we should not reuse the $f_1$ landmarks in the batch optimization we used for CKLAM calculation. 
+One point to be noticed here though is that since we marginalized the landmarks, $f_1$ and $f_5$ we either should not add an error term corresponding to the constraint represented by $x_1$, $f_1$ observation link while calculating the the hessian matrix, in which case the marginalization will have the effect represented by figure (\ref{fig:CKLAMMarginalizationFeatureClone}), or we should not reuse the $f_1, f_5$ landmarks in the batch optimization we used for CKLAM calculation. 
 
 \begin{figure}[ht]
 	\centering
@@ -178,7 +178,7 @@ A dense information matrix between key frame poses $x_1$ and $x_4$ represents co
   \end{split}
 \end{equation}
 
-Here $x_i ~ \mathcal{N}(\hat x_{i|i}, P_{i|i})$ represents the prior about the robot poses. The function $f(x_i, u_i)$ represents the propagation function, in our case this function represents the IMU integration function. Finally, $h(x_i,f_j)$ represents measurement function. In our case this function is the camera projection. Following the marginalization methodology discussed above we see that after marginalization the cost function in Eq.(\ref{BA_FULL_COST_REWRITTEN}) is approximated with Eq.(\ref{CKLAM_APPROX})
+Here $\hat{x}_i \sim \mathcal{N}(\hat x_{i|i}, P_{i|i})$ represents the prior about the robot poses. The function $f(x_i, u_i)$ represents the propagation function, in our case this function represents the IMU integration function. Finally, $h(x_i,f_j)$ represents measurement function. In our case this function is the camera projection. Following the marginalization methodology discussed above we see that after marginalization the cost function in Eq.(\ref{BA_FULL_COST_REWRITTEN}) is approximated with Eq.(\ref{CKLAM_APPROX})
 
 \begin{equation}
 	C_{CKLAM} = \frac{1}{2}
@@ -199,7 +199,7 @@ Here $x_i ~ \mathcal{N}(\hat x_{i|i}, P_{i|i})$ represents the prior about the r
 
 \section{CKLAM and Observability of BA}
 \label{cklamObservability}
-From the form of Eq.(\ref{CKLAM_APPROX}) we see that if $H_\mathrm{new}$ is dense then the information from non key frame poses is represented as Gaussian prior on $\begin{bmatrix} x_{1} \\ x_{2} \end{bmatrix}$, i.e. the key frame poses. This also means that the poses are globally constrained and does not have any free degree of freedom. Since we had absolute priors for the poses e.g. from GPS readings, absolute constraints are explainable and the formulation does not generate false constraints. But often in visual inertial localization and mapping we do not have any absolute position/pose measurement e.g. GPS measurements. In such a situation the prior pose error terms in Eq.(\ref{BA_FULL_COST_REWRITTEN}) i.e. $\sum_{i=0}^4 \frac{1}{2}||x_i-\hat x_{i|i}||^2_{P_{i|i}}$ can not be computed and hence dropped. This causes the whole cost function to have $4$ degrees of freedom (three from absolute position and one due to yaw angle), i.e. the cost function hessian becomes rank deficient by degree $4$. Since the cost function does not constrain all the independent parameters a visual inertial mapping system in absence of external absolute measurement is unobservable. This is the reason for drift corruption of vimaps. In order to get a reasonable solution in absence of absolute measurements, e.g. in case of GPS outage we often fix the first vertex to origin with a prior, with the hope that if an external measurement is made available at a later time we shall move the whole map segment by the given transformation. Now if we go ahead as the previous formulation still, we see that although there exists free degrees of freedom in the batch optimization cost, we create a dense marginalized information matrix. This directly results in creation of false constrains causing the subsequent optimization i.e. optimization with CKLAM to lose these degrees of freedom. Hence the problem becomes over constrained and behave poorly when true information constraining these degrees of freedom are received, e.g. while performing loop closure. Also since after marginalization the information of a CKLAM block is represented in the global frame in which the map segment is represented the calculation has to be re-performed if it a change of frame of reference is required, which is often the case when a place is mapped with multiple agents. To overcome all these difficulties, let us consider a slightly modified version of CKLAM termed Relative-CKLAM in the following chapter. In the relative version of CKLAM we try to marginalize the non-key-frame information as before but represent them with respect to the relative transformation between consecutive key-frames as opposed to directly projecting it onto the key-frame poses.
+From the form of Eq.(\ref{CKLAM_APPROX}) we see that if $H_\mathrm{new}$ is dense then the information from non key frame poses is represented as Gaussian prior on $\begin{bmatrix} x_{1} \\ x_{2} \end{bmatrix}$, i.e. the key frame poses. This also means that the poses are globally constrained and does not have any free degree of freedom. Since we had absolute priors for the poses e.g. from GPS readings, absolute constraints are explainable and the formulation does not generate false constraints. But often in visual inertial localization and mapping we do not have any absolute position/pose measurement e.g. GPS measurements. In such a situation the prior pose error terms in Eq.(\ref{BA_FULL_COST_REWRITTEN}) i.e. $\sum_{i=0}^4 \frac{1}{2}||x_i-\hat x_{i|i}||^2_{P_{i|i}}$ can not be computed and hence dropped. This causes the whole cost function to have $4$ degrees of freedom (three from absolute position and one due to yaw angle), i.e. the cost function hessian becomes rank deficient by degree $4$. Since the cost function does not constrain all the independent parameters a visual inertial mapping system in absence of external absolute measurement is unobservable. This is the reason for drift corruption of VI-maps. In order to get a reasonable solution in absence of absolute measurements, e.g. in case of GPS outage we often fix the first vertex to origin with a prior, with the hope that if an external measurement is made available at a later time we shall move the whole map segment by the given transformation. Now if we go ahead as the previous formulation still, we see that although there exists free degrees of freedom in the batch optimization cost, we create a dense marginalized information matrix. This directly results in creation of false constrains causing the subsequent optimization i.e. optimization with CKLAM to lose these degrees of freedom. Hence the problem becomes over constrained and behave poorly when true information constraining these degrees of freedom are received, e.g. while performing loop closure. Also since after marginalization the information of a CKLAM block is represented in the global frame in which the map segment is represented the calculation has to be re-performed if a change of frame of reference is required, which is often the case when a place is mapped with multiple agents. To overcome all these difficulties, let us consider a slightly modified version of CKLAM termed Relative-CKLAM in the following chapter. In the relative version of CKLAM we try to marginalize the non-key-frame information as before but represent them with respect to the relative transformation between consecutive key-frames as opposed to directly projecting it onto the key-frame poses.
 
 \chapter{Relative CKLAM}
 \label{sec:RCKLAM}
@@ -233,7 +233,7 @@ Since the loop closure edge now will cause the last vertex to move towards its t
  
 
 \section{RCKLAM Formulation}
-\label{rcklamSimple}
+\label{sec:rcklamSimple}
 For simplicity, let us momentarily assume that the pose of frame $x_2$ in frame $x_1$ with respect to $x_1$ is given by the simple  subtraction operation, i.e. $R(x_1, x_2) = x_2 - x_1$. Once we have established the methodology we shall look at the generalized case of it with a non linear function $R$ so as to deal with inverse quaternion multiplication. Given the cost function in Eq.(\ref{CKLAM_APPROX}) we wish to re-write it as in Eq.(\ref{CKLAM_COST_REWRITTEN})
 
 \begin{equation}
@@ -263,7 +263,8 @@ Comparing Eq.(\ref{CKLAM_APPROX}) and Eq.(\ref{rcklamSimple_CASE}) we can draw t
 Clearly we still do not have the form of the cost function as given in Eq.(\ref{COST_RCKLAM}), which is necessary for RCKLAM, but it can be recognized easily that it is very similar to the CKLAM problem we had in the beginning. Just like before once again we have a function of two variables and we would like to eliminate one of them. So once more we deploy Schur complement technique to eliminate the independent variable, $x_2$ in this case.
 
 \section{RCKLAM Generalized Relative Pose Computation}
-However our assumption that finding relative pose between two consecutive poses is linear operation, i.e. $R(x_1, x_2) = x_2 - x_1$, does not hold true once the pose representation contain quaternions for orientation since inverse quaternion multiplication is not a linear operation. So we would like to follow a general derivation similar to the one described in section \ref{rcklamSimple}. Eventually we shall find a similar relation ship as in Eq.(\ref{RCKLAM_FROM_CKLAM}) when linearity of $R(x_1, x_2)$ is not assumed and is considered a general nonlinear but differentiable function. Let us start with Eq.(\ref{CKLAM_APPROX}) and as before the objective would be to find the relationship of the hessian matrix and the gradient vector of it to the ones in Eq.(\ref{COST_RCKLAM}). As we can only represent linear operations through matrix manipulation we linearize $R$ by Taylor expansion. This is given by Eq.(\ref{RCKLAM_LINEAR_COST})
+\label{RCKLAMGeneralizedFormulation}
+However our assumption that finding relative pose between two consecutive poses is linear operation, i.e. $R(x_1, x_2) = x_2 - x_1$, does not hold true once the pose representation contain quaternions for orientation since inverse quaternion multiplication is not a linear operation. So we would like to follow a general derivation similar to the one described in section \ref{sec:rcklamSimple}. Eventually we shall find a similar relation ship as in Eq.(\ref{RCKLAM_FROM_CKLAM}) when linearity of $R(x_1, x_2)$ is not assumed and is considered a general nonlinear but differentiable function. Let us start with Eq.(\ref{CKLAM_APPROX}) and as before the objective would be to find the relationship of the hessian matrix and the gradient vector of it to the ones in Eq.(\ref{COST_RCKLAM}). As we can only represent linear operations through matrix manipulation we linearize $R$ by Taylor expansion. This is given by Eq.(\ref{RCKLAM_LINEAR_COST})
 
 \begin{equation}
   R(x_1, x_2) \approx R(\hat x_1, \hat x_2) + \frac{\partial R} {\partial x_1}\biggr\rvert_{\hat x_1, \hat x_2} (x_1 - \hat x_1)+ \frac{\partial R} {\partial x_2}\biggr\rvert_{\hat x_1, \hat x_2} (x_2 - \hat x_2)
