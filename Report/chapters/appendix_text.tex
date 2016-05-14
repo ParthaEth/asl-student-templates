@@ -1,4 +1,4 @@
-\chapter{Schur Complement of Square-root cost}\label{sec:schur_sqrt_cost}
+\chapter{Schur Complement of Square-root costs}\label{sec:schur_sqrt_cost}
 
 In chapter \ref{sec:RCKLAM} in section \ref{sec:rcklamSimple} we had the task of finding $A_\mathrm{RCKLAM}$ and $b_\mathrm{RCKLAM}$ given $A$ and $b$. The objective is to approximate the cost given in Eq.(\ref{sqrt_marginalization}) with Eq.(\ref{sqrt_cost_approx}) such that the solution for $x_1$ stays the same when we perform $argmin$ operation on either of the cost functions.
 
@@ -13,7 +13,7 @@ In chapter \ref{sec:RCKLAM} in section \ref{sec:rcklamSimple} we had the task of
   \end{equation}
 \end{subequations}
 
-Since the original cost $C$ in Eq.(\ref{sqrt_marginalization}) is quadratic in order to perform minimization we can simply set its first derivative to zero. This on further simplification gives us the following : 
+Since the original cost $C$ in Eq.(\ref{sqrt_marginalization}) is quadratic, in order to perform minimization we can simply set its first derivative to zero. This on further simplification gives us the following : 
 
 \begin{equation}
 \begin{split}
@@ -21,7 +21,7 @@ Since the original cost $C$ in Eq.(\ref{sqrt_marginalization}) is quadratic in o
   &\Rightarrow 2\left(A\begin{bmatrix}x_1 \\ x_2\end{bmatrix} + b\right)^TA = 0 \\
   &\Rightarrow A\begin{bmatrix}x_1 \\ x_2\end{bmatrix} + b = 0 \\
   &\Rightarrow \begin{bmatrix}A_{11} & A_{12}\\ A_{21} & A_{22}\end{bmatrix} \begin{bmatrix}x_1 \\ x_2\end{bmatrix} + \begin{bmatrix}b_1 \\ b_2\end{bmatrix} = 0 \\
-  &\Rightarrow A_{11}x_1 + A_{12}x_2 + b_1 = 0 \text{and} A_{21}x_1 + A_{22}x_2 + b_2 = 0 \\ 
+  &\Rightarrow A_{11}x_1 + A_{12}x_2 + b_1 = 0 \text{ and } A_{21}x_1 + A_{22}x_2 + b_2 = 0 \\ 
   &\Rightarrow x_2 = -A_{22}^{-1}A_{21}x_1 - A_{22}^{-1}b_2 \\
   &\Rightarrow \left(A_{11} - A_{12}A_{22}^{-1}A_{21}\right)x_1-A_{12}A_{22}^{-1}b_2 + b_1 = 0 \\
 \end{split}
@@ -40,4 +40,4 @@ Here $X = \begin{bmatrix}x_1 \\ x_2\end{bmatrix}$, $A = \begin{bmatrix}A_{11} & 
   \label{RCKLAM_FINAL_EQ}
 \end{subequations}
 
-Clearly the form of the solution shows that in order to marginalize/eliminate the $x_2$ variable we just need to take the schure complement of the appropriate block of the square root hessian matrix, in exactly the same way as before.
+Clearly the form of the solution shows that in order to marginalize/eliminate the $x_2$ variable we just need to take the Schur complement of the appropriate block of the square root hessian matrix, in exactly the same way as before.
